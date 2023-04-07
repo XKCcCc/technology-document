@@ -1,0 +1,62 @@
+-------------
+-----Git-----
+-------------
+
+1.安装
+
+2.配置
+	git config --global user.name "xx"
+	git config --global user.email xx
+ 	git config --list
+
+3.初始化本地仓库
+	git init
+
+4.工作区创建文件、添加到缓存区、提交到本地仓库
+	touch file.txt 
+	git status
+	git add .
+	git commit -m "decoration"
+	git log
+
+5.配置别名
+	用户目录 touch ~/.bashrc
+	git-log 输出git提交日志
+	ll 输出当前目录所有文件及基本信息
+
+6.版本回滚
+	git reset --hard ID
+	git reflog
+
+7.分支
+	git branch
+	git branch dev1
+	git checkout dev1
+	git branch -d dev1
+	git checkout -b dev2
+
+8.生成ssh
+	生成公私密钥
+	ssh-keygen -t rsa
+	查看
+	cat~/.ssh/id_rsa.pub
+
+9.连接远程仓库
+	github添加ssh公钥
+	ssh -T git@github.com
+	git remote add origin git@github.com:XKCcCc/git_test.git
+	git remote -v
+	git remote
+
+10.远程仓库推送
+	git push origin master
+	git push origin master:master
+	git push --set-upstream origin master
+
+11.远程仓库clone
+	git clone origin git@github.com:XKCcCc/git_test.git
+
+12.抓取拉取
+	git fetch
+	git merge origin/master
+	git pull

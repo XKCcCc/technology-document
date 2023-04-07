@@ -1,0 +1,234 @@
+一、SQL
+    （一）服务操作
+        启动MySQL服务 net start mysql80
+        关闭MySQL服务 net stop mysql80
+        连接客户端 mysql -h 127.0.0.1 -p 3306 -u root -p root
+    （二）数据库操作
+        查询所有数据库 show databases；
+        查询当前数据库 select database（）；
+        创建 create database [if not exists] 数据库名 [default charset 字符集] [collate 排序规则]；
+        删除 drop database [if exists] 数据库名；
+        使用 use 数据库名；
+    （三）表操作
+        查询当前数据库所有表 show tables；
+        查询表结构 desc 表名；
+        查询指定表的建表语句 show create table 表名； 
+        创建表 create table 表名(字段1 字段1类型 [comment 字段注释]，字段2 字段2类型 [comment 字段注释]，字段3 字段3类型 [comment 字段注释]，字段n 字段n类型 [comment 字段注释])[comment 表注释]；
+        添加字段 alter table 表名 add 字段名 类型 [comment 注释]；
+        修改字段数据类型 alter table 表名 modify 字段名 新数据类型；
+        修改字段名和数据类型 alter table 表名 change 旧字段名 新字段名 类型 [comment 注释]；
+        删除字段alter table 表名 drop 字段名；
+        修改表名 alter table 表名 rename to 新表名；
+        删除表 drop table [if exists] 表名；
+        删除指定表，并重新创建该表 truncate table 表名；
+    （四）添加数据
+        给指定字段添加数据insert into 表名 (字段名1，字段名2，...) values(值1，值2，...)；
+        给全部字段添加数据insert into 表名 values(值1，值2，...)；
+        批量添加数据insert into 表名 (字段名1，字段名2，...) values(值1，值2，...)；
+        insert into 表名 values(值1，值2，...)，(值1，值2，...)；
+    （五）修改数据
+        修改数据update 表名 set 字段名1=值1， 字段名2=值2，...[where 条件]；
+    （六）删除数据
+        删除数据 delete from 表名 [where 条件]；
+    （七）查询数据
+        select 字段列表 from 表名列表 where 条件列表 group by 分组字段列表 having 分组后条件列表 order by 排序字段列表 limit 分页参数；
+        1.基本查询
+            1.1 select 字段1，字段2，字段3，... from 表名；
+            1.2 select * from 表名；
+            1.3 设置别名 select 字段1 [as 别名1] 字段2 [as 别名2] from 表名；
+            1.4 去除重复记录select distinct 字段列表 from 表名；
+        2.条件查询
+            2.1 select 字段列表 from 表名 where 条件列表；
+            2.2 select * from 表名 where age = 88；
+            2.3 select * from 表名 where age < 20；
+            2.4 select * from 表名 where age <= 20；
+            2.5 select * from 表名 where idcard is null；
+            2.6 select * from 表名 where idcard is not null；
+            2.7 select * from 表名 where age != 18；
+            2.8 select * from 表名 where age <> 18；
+            2.9 select * from 表名 age >= 15 && age <= 20;
+            2.10 select * from 表名 where age >= 15 and age <= 20;
+            2.11 select * from 表名 where age between 15 and 20;
+            2.12 select * from 表名 where gender = "女" and age < 20;
+            2.13 select * from 表名 where age = 20 or age = 22 or age =24;
+            2.14 select * from 表名 where age in（20，22，24);
+            2.15 select * from 表名 where name like "___";
+            2.16 select * from 表名 where idcard like "%X";
+        3.聚合函数
+            3.1 select 聚合函数(字段列表) from 表名；
+            3.2 select count(*) from 表名；
+            3.3 select count(idcard) from 表名；
+            3.4 select avg(age) from 表名；
+            3.5 select max(age) from 表名；
+            3.6 select min(age) from 表名；
+            3.7 select sum(age) from 表名 where workaddress = "西安"；
+        4.分组查询
+            4.1 select 字段列表 from 表名 [where 条件] group by 分组字段名 [having 分组后过滤条件]；
+            4.2 select gender, count(*) from 表名 group by gender；
+            4.3 select gender,avg(age) from 表名 group by gender;
+            4.4 select workaddress, count(*) from 表名 where age < 45 group by workaddress having count(*) >= 3;
+        5.排序查询
+            5.1 select 字段列表 from 表名 order by 字段1 排序方式1，字段2 排序方式2；
+            5.2 select * from 表名 order by age asc;
+            5.3 select * from 表名 order by age desc;
+            5.4 select * from 表名 order by age；
+            5.5 select * from 表名 order by age asc， entrydate asc；
+        6.分页查询
+            6.1 select 字段列表 from 表名 limit 起始索引，查询记录数；
+            6.2 select * from 表名 limit 0，10;
+            6.3 select * from 表名 limit 10，10；
+    (八)用户管理
+        1.查询用户 use mysql； select * from user；
+        2.创建用户 create user "用户名"@"主机名" identified by "密码"；
+        3.修改用户密码 alter user "用户名"@"主机名" identified with mysql_native_password by "新密码"；
+        4.删除用户 drop user "用户名"@"主机名"；
+        5.查询权限 show grants for "用户名"@"主机名"；
+        6.授予权限 grant 权限列表 on 数据库名.表名 to "用户名"@"主机名"；
+        7.撤销权限 revoke 权限列表 on 数据库名.表名 from "用户名"@"主机名"；
+
+二、函数
+    （一）字符串函数
+        1.字符串拼接 select concat("hello", "MySQL");
+        2.字符串转小写 select lower("Hello");
+        3.字符串转大写 select upper("Hello");
+        4.字符串左追加 select lpad("01", 5, "-");
+        5.字符串右追加 select rpad("01", 5, "-");
+        6.字符串前后去空格 select trim ("  Hello MySQl  ");
+        7.字符串截取 select substring("Hello MySQL", 1, 5); 
+        8.例子 update 表名 set 字段 = lpad(字段, 5, "0");
+    （二）数值函数
+        1.向上取整 select ceil(1.5);
+        2.向下取整 select floor（1.9；
+        3.取模 select mod(7, 4)；
+        4.取随机值 select rand();
+        5.四舍五入 select rount(2.345, 2);
+        6.例子 select lpad(round(rand()*1000000, 0), 6, "0");
+    （三）日期函数
+        1.当前日期 select curdate();
+        2.当前时间 select curtime();
+        3.当前日期时间 select time();
+        4.获取年月日中的年 select YEAR(now());
+        5.获取年月日的月 select MONTH(now());
+        6.获取年月日的日 select DAY(now());
+        7.计算往后推的时间 select date_add(now(), INTERVAL 70 YEAR);
+        8.计算两个时间相差的时间 select datediff("2021-12-01", "2022-9-26");
+        9.例子 select name, datediff(curdate(), entryday) as "entrydays" from 表名 order by desc;
+    （四）流程函数
+        1.if() select if(true, "OK", "ERROR");
+        2.ifnull() select ifnull("OK", "default");
+        3.case() select name,(case workaddress when "北京" then "一线城市" when "上海" then "一线城市" else "二线城市" end) as "工作地址" from 表名；
+        4.case() select id,name,(case when math >= 85 then "优秀" when math >= 60 then "及格" else "不及格" end) as "数学" from 表名；
+
+三、约束
+    （一）分类
+        非空约束 NOT NULL
+        唯一约束 UNIQUE
+        主键约束 PRIMAEY KEY
+        默认约束 DEFAULT
+        检查约束 CHECK
+        外键约束 FOREIGN KEY
+    （二）示例
+        create table user(
+        id int primary key auto_increment comment "主键",
+        name varchar(10) not null unique comment "姓名",
+        age int check ( age > 0 && age <= 120) comment "年龄",
+        status char(1) default "1" comment "状态",
+        gender char(1) comment "性别" 
+        ) comment "用户表";
+    （三）外键约束
+        1.添加外键 alter table 表名 add constraint fk_emp_dept_id foreign key (dept_id) references dept(id);
+        2.删除外键 alter table 表名 drop foreign key fk_emp_id;
+    （四）外键删除/更新行为
+        1.外键删除/更新行为cascade级联
+            alter table 表名 add constraint fk_emp_dept_id foreign key (dept_id) references dept(id) on update cascade on delete cascade;
+        2.外键删除/更新行为set null置空
+            alter table 表名 add constraint fk_emp_dept_id foreign key (dept_id) references dept(id) on update set null on delete set null;
+
+四、多表查询
+    （一）多表关系
+        一对多  实现：在多的一方简历外键，指向一的一方的主键 
+        多对多 实现：建立第三张中间表包含两个外键，分别关联两份主键
+        一对一 实现：在任意一方加入外键，关联另外一方的主键，并设置外键为唯一约束
+    （二）多表查询
+        1.内连接查询
+            1.1内连接查询，消除无效的笛卡尔积 select * from 表名1，表名2 where 表名1.dept_id = 表名2.id;
+            1.2显式内连接查询 select 表名1.name,表名2.name from 表名1,表名2 where 表名1.dept_id = 表名2.id;
+            1.3隐式内连接查询 select  表名1.name, 表名2.name from 表名1 join 表名2 on 表名1.dept_id = 表名2.id;
+        2.外连接查询
+            2.1左外连接查询 select 表名1.*, 表名2.name from 表名1 left join 表名2 on 表名1.dept_id = 表名2.id;
+            2.2右外连接查询 select 表名1.*, 表名2.* from 表名1 right join 表名2 on 表名1.dept_id = 表名2.id;
+        3.自连接查询
+            3.1自连接查询(内连接) select 别名1.name,别名2.name from 表名 别名1,表名 别名2 where 别名1.managerid = 别名2.id;
+            3.2自连接查询(外连接) select 别名1.name,别名2.name from 表名 别名1 left join 表名 别名2 on 别名1.managerid = 别名2.id;
+        4.联合查询，列数和字段必须一致
+            4.1select * from 表名 where salary < 5000 union select * from 表名 where age > 50;
+        5.子查询
+            5.1标量子查询=  <>  >  >=  <  <= 
+                select * from 表名1 where dept_id = (select * from 表名2 where name = "销售部");
+            5.2列子查询in  not in   any  some  all 
+                select * from 表名 where dept_id in (select id from 表名2 where name="销售部" or name="市场部");
+            5.3行子查询=  <>  in  not in
+            select * from 表名 where (salary, managerid) = (select salary, managerid from 表名 where name = "张无忌")
+            5.4表子查询in
+                select * from 表名 where (job, salary) in (select job,salary from 表名 where name = "鹿杖客" or name = "宋远桥");
+    （三）例子
+        1.select 表名1.name, 表名1.age, 表名1.job,表名2.name from 表名1， 表名2 where 表名1.dept_id = 表名2.id;
+        2.select 表名1.name, 表名1.age, 表名1.job,表名2.name from 表名1 join 表名2 on 表名1.dept_id = 表名2.id where 表名1.age < 30;
+        3.select distinct * from 表名1，表名2 where 表名1.dept_id = 表名2.id;
+        4.select 表名1.*, 表名2.name from 表名1 left join 表名2 on 表名1.dept_id = 表名2.id where age > 40;
+        5.select 表名1.*,表名2.losal,表名2.hisal from 表名1,表名2 where 表名1.salary >= 表名2.losal and 表名1.salary <= 表名2.hisal;
+        6.select 表名1.*,表名2.grade from 表名1，表名2,表名3 where 表名1.dept_id = 表名2.id and 表名1.salary >= 表名2.losal and 表名1.salary <= 表名2.hisal and 表名3.name = "研发部";
+        7.select avg(表名1.salary) from 表名1,表名2 where 表名1.dept_id  = 表名2.id and 表名2.name = "研发部";
+        8.select salary from 表名1 where name = "灭绝";
+        9.select * from 表名1 where salary > (select salary from 表名1 where name = "灭绝");
+        10. select * from 表名1 where salary > (select avg(salary) from 表名1);
+        11.select avg(表名.salary) from 表名 where 表名.dept_id = 1;
+        12.select id,name,(select count(*) from 表名1 别名1 where 别名1.dept_id = 别名2.id) "人数" from 表名2 别名2;
+
+五、事务
+    （一）事务是一组操作的集合，它是一个不可分割的工作单位，事务会把所有的操作作为一个整体一起向系统提交或撤销操作请求，即这些操作要么同事成功，要么同时失败。
+        1.查看事务提交方式 select @@autocommit;
+        2. 设置事务的提交方式，0手动，1自动set @@autocommit 0;
+        3.提交事务 commit;
+        4.回滚事务 rollback;
+        5.开启事务 start transaction;
+    （二）事务的四大特性：
+        原子性：事务是不可分割的最小操作单元，要么全部成功，要么全部失败；
+        一致性：事务完成时，必须时所有数据都爆出一致状态；
+        隔离性：数据库系统提供的隔离机制，保证事务在不受外部并发操作影响的独立环境下运行；
+        持久性：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的；
+    （三）并发事务问题
+        脏读：一个书屋读到另外一个事务还没有提交的数据；
+        不可重复读：一个事务先后读取同一条记录，但两次读取的数据不同；
+        幻读：一个事务按照条件查询数据时，没有对应的数据行，但是在插入数据时，右发现这行数据以及存在，好像出现了"幻影"；
+    （四）事务的隔离级别
+        read uncommitted   无发解决
+        read committed     解决脏读
+        repeatable read    解决脏读 不可重复读
+        serialzable        解决脏读 不可重复读 幻读
+        1.查看事务的隔离级别 select @@transaction_isolation;
+        2.设置事务的隔离级别 set session transaction isolation level read uncommitted;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
