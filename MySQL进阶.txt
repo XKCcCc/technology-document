@@ -1,6 +1,11 @@
+---------------
+---MySQL进阶---
+---------------
+
 一、存储引擎
     （一）MySQL体系结构
         连接层、服务层、引擎层、存储层
+        逻辑存储结构：表空间、段、区、页、行
     （二）存储引擎简介
         存储引擎就是存储数据、建立索引、更新/查询数据等技术的实现方式。存储引擎是基于表的，而不是基于库的，所以存储引擎也被称为表类型。
         默认存储引擎InnoDB；
@@ -21,7 +26,7 @@
     优点：提高数据的检索效率；通过索引列对数据进行排序，降低数据排序的成本，降低CPU的消耗；
     缺点：索引列也是要占用空间的；索引大大提高了查询效率，同时降低了更新表的速度，如对表进行增删改效率降低；
     索引结构的分类：B+tree索引、Hash索引、R-tree索引、Full-text索引
-    为什么InnoDB存储引擎选择事业B+tree索引结构
+    为什么InnoDB存储引擎选择使用B+tree索引结构
         相对于二叉树，层级更少，搜索效率高；
         对于B-tree，无论是叶子节点还是非叶子节点，都会保存数据，这样导致一页中的存储的键值减少，指针跟着减少，要同样保存大量数据，只能增加树的高度，导致性能降低；
         相对于Hash索引，B+tree支持范围匹配及排序操作；
@@ -32,9 +37,9 @@
         全文索引：全文索引查找的是文中的关键词，而不是比较索引，可以有多个，FULLTESXT
         InnoDB根据索引的存储形式，可以分为
             聚集索引：将数据存储于索引放到了一块，索引结构的叶子节点保存了行数据，必须有且只有一个
-            二级索引：将数据与所引分开存储，索引结构的叶子节点关联的是对应的主键，可以存在多个
+            二级索引：将数据与索引分开存储，索引结构的叶子节点关联的是对应的主键，可以存在多个
     索引语法
-        创建索引 create [unique|fulltext] index index_name on 表名 index_col_name）;
+        创建索引 create [unique|fulltext] index index_name on 表名（index_col_name）;
         查看索引 show index from 表名;
         删除索引 drop index index_name on 表名;
     SQL性能分析
@@ -75,13 +80,13 @@
             模糊查询：如果仅是尾部模糊匹配，索引不会失效，如果是头部模糊匹配，索引失效；
             or连接的条件：用or分开的条件，如果or前的条件中的列有索引，而后面的列中没有索引，那么涉及的索引都不会被用到；
             数据分布影响：如果MySQL评估使用索引比全表更慢，则不使用索引；
-            SQL提示：SQL提示是优化数据库的一个重要手段，简单来说，就是再SQ语句中加入一些人为的提示来达到优化操作的目的；
+            SQL提示：SQL提示是优化数据库的一个重要手段，简单来说，就是再SQL语句中加入一些人为的提示来达到优化操作的目的；
                 在SQL语句中加入use index()、ignore index()、force index();
             覆盖索引：尽量使用覆盖索引（查询使用了索引，并且需要返回的列，在该索引中已经全部能够找到），减少select *；
-            前缀索引：当字段类型未字符串（varchar、char等）时，有时候需要所有很长的字符串，这会让索引变得很大，查询时浪费大量的磁盘IO，影响查询效率，此时可以只将自负床的一部分前缀建立索引，这样可以大大节约索引空间，从而提高索引效率；
+            前缀索引：当字段类型为字符串（varchar、char等）时，有时候需要所有很长的字符串，这会让索引变得很大，查询时浪费大量的磁盘IO，影响查询效率，此时可以只将字符串的一部分前缀建立索引，这样可以大大节约索引空间，从而提高索引效率；
             单列索引与联合索引：建议使用联合索引；
     索引设计原则
-        针对于数据量较大，且查询比较评分的表建立索引。
+        针对于数据量较大，且查询比较频繁的表建立索引。
         针对于常作为查询条件（where）、排序（order）、分组（group by）操作的字段建立索引；
         精良选择区分度高的列作为索引，尽量建立唯一索引，区分度高，使用索引的效率越高；
         如果是字符串类型的字段，字段的长度较长，可以针对于字段的特点，建立前缀索引；
@@ -90,11 +95,145 @@
         如果索引列不能存储NULL值，请在创建表时使用NOT NULL约束它，当优化器知道每列是否包含NULL值时，它可以更好地确定哪个索引最有效地用于查询；
 
 三、SQL优化
-
+    插入数据
+        批量插入
+        手动提交事务
+        主键顺序插入
+        大批量插入数据使用load指令进行插入
+            客户端连接服务端时，加上参数 --local-infile  mysql --local-infile -u root -p root
+            设置全局参数local_infile为1，开启从本地加载文件导入数据的开关 select @@local_infile; set golbal local_infile = 1;
+            执行load指令将准备好的数据，加载到表结构中 load data local infile "/root/sql1.log" into table `tb_user` fields teminated by "," ,lines terminated by "/n"; 
+            主键顺序插入性能高于乱序插入
+    主键优化
+        满足业务需求的情况下，尽量降低主键的长度；
+        插入数据时，尽量选择顺序插入，选择使用auto_increment自增主键；
+        尽量不要使用UUID做主键或者是其他自然主键，如身份证号；
+        业务操作是，避免对主键的修改；
+    order by优化
+        根据排序字段建立合适的索引，多字段排序是，也遵循最左前缀法则；
+        尽量使用联合索引，减少单列索引，查询时，联合索引很多时候可以覆盖索引，节省存储空间，避免回表，提高查询效率；多字段排序，一个升序一个降序，此时需要注意联合索引在创建时的规则；
+        如果不可避免的出现filesort，大数据量排序时，可以适当增大排序缓冲区的大小sort_butter_size;
+    group by优化
+        在分组操作时，可以通过索引来提高效率；
+        分组操作时，索引的使用也是满足最左前缀法则；
+    limit优化
+        一般分页查询时，通过创建覆盖索引能够比较好的提高性能，可以通过覆盖所有加子查询形式进行优化；
+    count优化
+        按照效率排序的话，count(字段)<count(主键id)<count(1)=count(*);
+    update优化
+        InnoDB行锁时针对索引加的锁，部署针对记录加的锁，并且该索引不能失效，否则会从行锁升级为表锁；
 四、视图/存储过程/触发器
+    视图
+        创建视图 create [or replace] view 视图名称 as select语句；
+        查询创建视图语句 show create view 视图名称
+        查询视图数据 select * from 视图名称；
+        修改视图 create or replace view 视图名称 as select 语句；
+                alter view 视图名称 as select语句；
+        删除视图 drop view if exists 视图名称；
+        视图的检查选项 with cascaded check option 
+                      with local check option
+        视图的更新
+            视图中的行与基础表中的行之间必须存在一对一的关系，若视图创建包含聚合函数、distinct、group by、having、union则不能更新；
+        视图的作用
+            简单、安全、数据独立
+    存储过程
+        存储过程就是数据库SQL语言层的代码封装与重用
+        存储过程
+            创建 create procedure 存储过程名称([参数列表])
+                 begin
+                    --SQL语句
+                 end；
+            调用 存储过程名称([参数]);
+            查看
+                查询指定数据库的存储过程及状态信息 select * from information_schema.routines where routine_schema = "数据库";
+                查询某个存储过程的定义 show create procedure 存储过程名;
+            删除 drop procedure 存储过程名;
+        系统变量
+            查看 show [session|global] variables；
+            设置 set [session|global] 系统变量名；
+        用户定义变量
+            赋值 set @var_name = expr;
+                 select count(*) into @var_name from 表名;
+            使用 select @var_name;
+        局部变量 可用作存储过程内的局部变量；
+            声明 declare 变量名 变量类型 [default];
+            赋值 set 变量名 = 值;
+                 select 字段名 into 变量名 from 表名;
+        if
+            if 条件1 then
+                ...
+            elseif 条件2 then
+                ...
+            else
+                ...
+            end if;
+        参数in、out、inout
+            用法 create procedure 存储过程名([in/out/inout 参数名 参数类型])
+                 begin
+                    --SQL语句
+                 end;
+        case
+            用法 case
+                 when 条件 then 执行内容
+                 when 条件 then 执行内容
+                 else 执行内容
+                 end case；
+        while
+            while 条件 do
+                SQL语句
+            end while；
+        repeat
+            repeat
+                SQL语句
+                until 条件1
+            end repeat；
+        loop
+            [label]:loop
+                SQL语句
+                leave label;
 
+            end loop [label];
+        游标
+            declare 游标名称 cursor for 查询语句; 声明游标
+            open 游标名称; 打开游标
+            fetch 游标名称 into 变量; 获取游标记录
+            close 游标名称; 关闭游标
+    存储函数
+        create function 存储函数名称([参数列表])
+        returns tpye [caracteristic]
+        begin
+            SQL语句
+            return ...;
+        end
+    触发器
+        创建
+            create trigger trigger_name
+            before/after insert/update/delete
+            on tb_name for each row -行级触发器
+            begin
+                trigger_stmt;
+            end;
+        查看
+            show triggers;
+        删除
+            drop trigger [schema_name.]trigger_name;
 五、锁
-
+    全局锁
+        flush tables with read lock；数据库加锁
+        mysqldump -u root -p 123456 itcast > itcast.sql;数据库备份
+        unlock tables；数据库解锁
+    表级锁
+        表锁
+            分类：表共享读锁、表独占写锁
+            加锁 lock tables 表名 read/write;
+            释放锁 unlock tables/客户端断开连接;
+        元数据锁
+        意向锁
+            分类：意向共享锁、意向排他锁；
+    行级锁
+        分类：行锁、间隙锁、临键锁
 六、InnoDB引擎
-
+    逻辑存储结构：表空间、段、区、页、行
+    事务原理
+    MVCC
 七、MySQL管理

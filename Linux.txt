@@ -1,0 +1,375 @@
+-----------
+---Linux---
+-----------
+
+一、初识Linux
+    计算机由硬件和软件组成；
+    操作系统是软件的一类，主要作用是协助用户调度硬件工作，充当用户和计算机硬件之间的桥梁；
+    常见的操作系统有：PC端：Windows、Linux、MacOS；移动端：Android、IOS、鸿蒙；
+    Linux系统的组成
+        Lunux系统内核，内核提供最核心的功能，如：调度CPU、调度内存、调度文件系统、调度网络通讯、调度IO等；
+        系统级应用程序：系统级应用程序可以理解为出厂自带程序，可供用户快速上手操作系统，如：文件管理器、任务管理器、图片查看、音乐播放等；
+    VMware快照
+        快照制作：虚拟机关机-虚拟机右键-快照-拍摄快照 
+        快照恢复：虚拟机关机-虚拟机右键-快照-转到       
+二、Linux基础命令
+    Linux的目录结构
+                                /
+                                |
+        ———————————————————————————————————————————————
+        |     |   |   |   |     |   |   |    |   |    |                        
+        bin boot dev etc home root run sbin tmp usr var
+                          |                      |    |
+              ————————————|      ————————————————|    |
+              |      |    |      |     |    |    |    |
+              Alice bob eve     bin local sbin tmp  tmp          
+    Linux命令
+        命令的通用格式： command [-options] [parameter]
+            command:命令本身
+            -options：可选非必填，命令的一些选项，可以通过选项控制命令的行为细节；
+            parameter：可选非必填，命令的参数，多数用于命令的指向目标等;
+        特殊路径符
+            . 表示当前目录 cd ./Desktop
+            .. 表示上一级目录 cd ..  cd ../c..
+            ~ 表示home目录
+        ls [-a -l -h] [Linux路径] 列出目录下的内容(list)；
+            -a 列出全部文件（all）
+            -l 以列表的形式展示内容（list）
+            -h 展示文件大小单位，需与-l一起使用
+        cd [Linux路径] 更改当前所在的工作目录（change directory）
+            有参数切换到指定目录，无参数切换到home目录
+        pwd 查看当前所在目录(print work directory)
+        mkdir [-p] Linux路径 创建新的文件夹(make directory)
+            Linux路径可以是相对路径也可以是绝对路径
+            -p表示自动创建不存在的父目录
+        touch Linux路径 创建文件(touch) 
+        cat 查看文件内容(catch)
+        more 查看文件内容，支持翻页,空格翻页，q退出(more)
+        cp [-r] Linux路径1 Linux路径2 复制文件或文件夹(copy)
+            -r 用于复制文件夹用，表示递归
+            Linux路径1表示被复制的文件或文件夹，Linux路径2表示要复制去的地方
+        mv Linux路径1 Linux路径2 用于移动文件或文件夹(move)
+            Linux路径1表示被移动的文件或文件夹，Linux路径2表示要移动去的地方，若目标不存在则进行改名
+        rm [-r -f] linux路径 用于删除文件或文件夹(remove)
+            -r 用于删除文件夹
+            -f 强制删除(force)
+            rm支持通配符*，用于模糊匹配
+        which 要查找的命令 查看所使用命令的程序文件在哪里
+        find 用于查找文件
+            find 起始路径 -name "被查找文件名" 按文件名查找文件
+            find 起始路径 -size +|-n[kMG] 按文件大小查找文件
+                +、-表示大于和小于
+                n表示大小数组
+                kMG表示大小单位
+            find支持通配符*，用于模糊匹配
+        grep [-n] 关键字 文件路径 从文件中通过关键字过滤文件
+            -n 可选，表示在结果中显示匹配的行的行号
+            关键字 表示要过滤的关键字，带有空格或其他特殊符号，建议使用""将关键字包围起来
+            文件路径 表示要过滤内容的文件路径，可作为内容输入端口
+        wc [-c -m -l -w] 文件路径 统计文件的行数、单词的数量等
+            -c 统计bytes数量
+            -m 统计字符数量
+            -l 统计行数(line)
+            -w 统计单词数量(word)
+            文件路径 被统计的文件，可作为内容输入端口
+        | 管道符将管道符左边命令的结果，作为右边命令的输入
+            cat itheima.txt | grep itheima 
+        echo 输出的内容 在命令行内输出指定的内容
+            输出的内容可用""包围
+            echo `命令` 被`包围的内容会作为命令执行
+        > >> 重定向符
+            > 将左侧命令的结果覆盖写入到符号右侧指定的文件中
+            >> 将左侧命令的结果追加写入到符号右侧指定的文件中
+            echo "Hello Linux" > itheima.txt
+            echo "Hello itcast" >> itheima.txt
+        tail [-f -num] Linux路径 查看文件尾部的内容
+            Linux路径表示被跟着的文件路径
+            -f 表示持续追踪(follow),ctrl+C强制结束命令执行
+            -num 表示查看尾部多少行
+        vi/vim编辑器
+            命令模式 所敲按键编辑器都理解为命令
+                i 在当前光标位置进入输入模式
+                a 在当前光标位置之后进入命令模式
+                I 在当前行的开头进入输入模式
+                A 在当前行的结尾进入输入模式
+                o 在当前光标下一行进入输入模式
+                O 在当前光标上一行进入输入模式
+                / 进入搜索模式
+                dd 删除当前所在行内容
+                yy 复制当前行 
+                p 粘贴复制的内容
+                u 撤销修改
+                ctrl+r 反向撤销
+                gg 跳到首行
+                G 跳到尾行
+            输入模式 编辑模式，可对文件内容进行自由编辑
+            底线命令模式 以:开始，常用于文件的保存、退出
+                :wq 保存并退出
+                :q 仅退出
+                :q! 强制退出
+                :w 仅保存
+                :set nu 显示行号
+                :set paste 设置粘贴模式
+            vim 文件路径 通过vim编辑文件
+                文件路径存在则编辑文件，不存在则编辑新文件
+                vim hello.txt编辑一个新文件
+                命令模式按i进入输入模式(insert)
+                输入模式按esc退回命令模式
+                命令模式按:进入底线命令模式
+                底线命令输入:wq保存文件并退出vim编辑器(write quit)
+三、Linux权限掌控
+    root用户
+        su [-] [用户名] 切换账户（switch）
+            - 可选，表示切换用户后加载环境变量
+            用户名 表示要切换的用户，省略表示切换到root用户
+        exit/ctrl+d 退出root用户   
+        sodo 其他命令
+            为命令临时赋予root授权，需要为普通用户配置sudo认证
+            为普通用户配置sudo认证：切换到root用户，执行visudo命令，在文件最后添加 用户名 ALL=(ALL) NOPASSWD:ALL,最后通过wq保存
+    用户组管理（需切换到root用户）
+        groupadd 用户组名 创建用户组 
+        groupdel 用户组名 删除用户组 
+    用户管理
+        useradd [-g -d] 用户组名 创建用户
+            -g 指定用户的组，不指定-g会创建同名组并自动加入，指定-g需要组已经存在
+            -d 指定用户home路径
+        userdel [-r] 用户名 删除用户
+            -r 删除用户的home目录，不使用-r只删除用户不删除目录
+        id [用户名] 查看用户所属组
+            用户名 被查看的用户，如果不提供则查看本身
+        usermod -aG 用户组 用户名 修改用户所属组
+        getent passwd 查看当前系统中的用户
+        getent group 查看当前系统中的组
+    权限
+        权限细节总共分为10个槽位，r表示读权限(read)，w表示写权限(write)，x表示执行权限(execute)；
+                 所属用户权限  所属用户组权限    其他用户权限
+                      |             |              |
+                  —————————     —————————      ————————— 
+                 |    |    |   |    |    |    |    |    |
+        -或d或l r或- w或- x或- r或- w或- x或- r或- w或- x或-
+           |
+        - 表示文件
+        d 表示文件夹
+        l 表示软链接 
+        chomd [-R] 权限 文件或文件夹 修改文件或文件夹的权限形象信息，需所属用户或root用户可以修改
+            -R 对文件夹内的全部内容应用同样的操作
+            chmod -R u=rwx,g=rx,0=x test
+            权限的数字符号
+            r代表4 w代表2 x代表1
+        chown [-R] [用户]:[用户组] 文件或文件夹 修改文件或文件夹所属用户和用户组
+            -R 对文件夹内全部内容应用相同规则
+            用户 修改文件或文件夹所属用户
+            用户组 修改所属用户组
+            : 用于分隔用户和用户组
+四、Linux实用操作
+    实用技巧
+        ctrl+c 强制停止
+        ctrl+d 退出用户登录
+        history 查看历史输入过的命令
+        ctrl+a 跳到命令开头
+        ctrl+e 跳到命令结尾
+        clear/ctrl+l 清空终端内容
+    软件安装
+        CentOS：yum [-y] [install | remove | search] 软件名称 用于自动化安装配置Linux软件，并可以自动解决依赖问题
+            yum命令需要root权限，同时需要联网
+            -y 自动确认，无需手动确认安装或卸载过程
+            install 安装
+            remove 卸载
+            search 搜索
+        Ubuntu：apt [-y] [install | remove | search] 软件名称
+            用法与yum一致，需要root权限
+        systemctl start | stop | status |enable |disable 服务名 启动、停止、开机自启软件服务
+            start 启动
+            stop 关闭
+            status 查看状态
+            enable 开启开机自启
+            disable 关闭开机自启
+        系统内置服务
+            NetworkManager 主网络服务
+            network 副网络服务
+            firewalld 防火墙服务
+            sshd ssh服务
+    软连接
+        ln -s Linux路径1 Linux路径2 创建软链接，将文件、文件夹链接到其他位置
+            -s 创建软链接
+            Linux路径1 被链接的文件或文件夹
+            Linux路径2 要链接去的目的地
+    日期和时间
+        date [-d] [+格式化字符串] 查看系统的时间
+        -d 按照给定的字符串显示日期，一般用于日期计算
+        格式化字符串：通过特定的字符串标记，来控制显示的日期格式
+            %Y 年
+            %y 年份后两位数字
+            %M 月份
+            %d 日
+            %H 小时
+            %M 分钟
+            %S 秒
+            %s 时间戳
+        Linux修改时区
+            实用root权限执行如下命令
+                rm -f /etc/localtime
+                sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+            ntp程序
+                安装 yum -y install ntp                启动 systemctl start ntpd
+                开机自启 systemctl enable ntpd
+                手动校准 ntpdate -u ntp.aliyun.command
+        IP地址和主机名
+            ifconfig 查看本机IP地址
+                若无法实用则 yum -y install net-tools
+            hostname 查看主机名
+            hostnamectl set-hostname 主机名 设置主机名
+            VMware固定IP
+                1.在VMware中配置IP网关和网段
+                    在VMware虚拟网络编辑器中设置
+                2.在Linux中手动修改配置文件，固定IP
+                    vim /etc/sysconfig/network-scripts/ifcfg-ens33
+                    BOOTPROTO="static"
+                    IPADDR="192.168.88.130"
+                    NETMASK="255.255.255.0"
+                    GATEWAY="192.168.88.2"
+                    DSN1="192.168.88.2"
+        网络传输、下载和端口
+            ping [-c num] ip或主机名 检查指定的网络服务器是否是可联通状态
+                -c 检查的次数，不使用将无限次数持续检查
+                IP或主机名 被检查的服务器ip地址或主机名地址
+            wget [-b] url 非交互式的文件下载器在命令行内下载网络文件
+                -b 可选，后台下载，会将日志写入到当前工作目录的wget-log文件
+                url 下载链接
+            curl [-O] url  下载文件、获取信息等
+                -O 用于下载文件，当url是下载链接是，可以用此选项保存文件
+                url 要发起请求的网络地址
+            Linux系统端口
+                公认端口：1-1023，非必要不要占用
+                注册端口：1024-49151，通常可以随意使用
+                动态端口：49152-65535，通常不会固定绑定程序
+            nmap IP地址 查看端口的占用情况
+                使用前需要先 yum -y install nmap
+            nnetstat -anp|grep 端口号 查看指定端口的占用情况
+                使用前需要先 yum -y install net-tools
+        进程
+            ps [-e -f] 查看进程信息
+                -e 显示出全部的进程
+                -f 以完全格式化的形式展示信息
+                一般固定用法是 ps -ef
+            kill [-9] 进程ID
+                -9 表示强制关闭进程
+        主机状态
+            top 查看CPU、内存使用情况
+            df [-h] 查看硬盘的使用情况
+                -h 以更加人性化的单位显示
+            iostat [-x] [num1] [num2] 查看CPU、磁盘的相关信息
+                -x 显示更多信息
+                num1 刷新间隔
+                num2 刷新几次
+            sar -n DEV num1 num2 查看网络的相关统计
+                -n 查看网络，DEV表示查看网络接口
+                num1 刷新间隔
+                num2 查看次数
+        环境变量
+            env 查看当前系统中记录的环境变量
+            export 变量名=变量值 临时设置环境变量
+            针对当前用户生效，配置~/.bashrc
+            针对所有用户生效，配置/etc/profile
+            并通过语法source 配置文件进行立刻生效
+            echo $变量名 输出变量内容
+        文件上传和下载
+            通过FinalShell对Linux系统进行上传下载操作
+            yum -y install lrzsz 安装rz、sz命令
+            rz 进行文件上传
+            sz 要下载的文件 进行文件下载
+        文件的压缩和解压
+            tar [-c -v -x -f -z -C] 参数1 参数2 ... 参数n 进行压缩和解压的操作
+                -c 创建压缩文件 用于压缩模式
+                -v 显示压缩、解压过程，用于查看进度
+                -x 解压模式
+                -f 要创建的文件或要解压的文件，-f必须在所有选项中处于最后一个
+                -z gzip模式，不适用-z就是普通tarball格式
+                -C 选择解压的目的地，用于解压模式
+                    tar -cvf test.tar 1.txt 2.txt 3.txt 压缩为tar
+                    tar -zcvf test.tar.gz 1.txt 2.txt 3.txt 压缩为gzip
+                    tar -xvf test.tar 解压tar
+                    tar -xvf text.tar -C /home/itheima 解压tar到指定目录
+                    tar -zxvf test.tar.gz -C /home/itheima 解压gzip到指定目录
+            zip [-r] 参数1 参数2 ... 参数n 压缩文件为zip
+                -r 被压缩的包含文件夹的时候，需要使用-R
+                    zip test.zip a.txt b.txt c.txt 压缩为zip
+                    zip -r test.zip test itheima a.txt 压缩文件夹为zip
+            unzip [-d] 参数1 解压zip文件
+                -d 指定要解压去的位置，
+                参数 被解压的zip压缩包文件
+            
+五、实战软件部署
+    MySQL(CentOS)
+        配置yum仓库
+            rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 #更新密钥
+            rpm -Uvh http://repo.mysql.com//mysql57-community-release-el7-7.noarch.rpm
+        使用yum安装MySQL
+            yum -y install mysql-community-server #yum安装MySQL
+        启动MySQL并配置开机自启
+            systemctl start mysqld #启动
+            systemctl enable mysqld #开机自启
+        检查MySQL的运行状态
+            systemctl status mysqld
+        获取MySQL的初始密码
+            grep "temporary password" /var/log/mysqld.log
+        修改root用户密码
+            alter user "root"@"localhost" identified by "密码";
+        配置root的简单密码
+            set global validate_password_policy=LOW;
+            set global validate_password_length=4;
+        配置root运行远程登录
+            grant all privileges on *.* to root@"IP" identified by "密码" with grant option;
+            flush privileges;
+        退出MySQL控制台页面
+            exit;
+        检查端口
+            netstat -anp | grep 3306
+    MySQL(Ubuntu)
+        下载apt仓库软件
+            wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb #下载apt仓库安装包，Ubuntu的安装包是.deb文件
+        配置apt仓库
+            dpkg -i mysql-apt-config_0.8.12-1_all.deb
+        更新apt仓库信息
+            apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 467B942D3A79BD29 #首先导入仓库的密钥信息 #使用dpkg安装仓库
+            apt update #更新仓库信息
+        检查是否成功配置MySQL5.7的仓库
+            apt-cache policy mysql-server
+        安装MySQL5.7
+            apt install -f -y mysql-client=5.7* mysql-community-server=5.7* #使用apt安装mysql客户端和mysql服务器
+        启动MySQL
+            /etc/init.d/mysql start
+            /etc/init.d/mysql stop
+            /etc/init.d/mysql status
+        dui1MySQL进行初始化
+            mysql_secure_installation
+    Nginx
+        安装yum依赖程序
+            yum install -y yum-utils
+        手动添加Nginx的yum仓库
+            yum程序使用的仓库配置文件，存放在：/etc/yum.repo.d内
+            vim /etc/yum.repos.d/nginx.repo
+        通过yum安装最新稳定版Nginx
+            yum install -y nginx
+        启动
+            systemctl start nginx
+        配置防火墙放行
+            systemctl stop firewalld #关闭防火墙
+            firewall-cmd --add-port=80/tcp --permanent #放行80端口
+            firewall-cmd --reload
+    Redis
+        配置EPEL仓库
+            yum install -y epel-release
+        安装redis
+            yum install -y redis
+        启动redis
+            systemctl start redis
+        放行防火墙，redis使用端口6379
+            systemctl stop firewall #关闭防火墙
+            firewall -cmd --add-port=6379/tcp -permanent #放行端口
+            firewall-cmd --reload
+六、脚本&自动化
+
+七、项目实战
+
+八、云平台技术
